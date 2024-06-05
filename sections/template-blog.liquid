@@ -1,0 +1,58 @@
+<div class="py-8">
+  <h1 class="text-center uppercase text-2xl font-semibold mb-10">{{ blog.title }}</h1>
+  {% paginate blog.articles by section.settings.number_of_blog_posts %}
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      {% for article in blog.articles %}
+        <div class="grid grid-col-1  mb-8 border border-gray-200">
+          <div class="img-wrapper w-full h-[180px] overflow-hidden">
+            {% if article.image != blank %}
+              <a href="{{ article.url }}">
+                <img src="{{ article.image | img_url: 'medium'}}"class="block w-full"alt="{{ article.image.alt }}">
+              </a>
+            {% else %}
+              {% assign placeholder_img = 'lifestyle-2' %}
+              {{ placeholder_img | placeholder_svg_tag: 'w-full h-full object-fill object-center' }}
+            {% endif %}
+          </div>
+          <div class="article-details py-4 px-4">
+            <h1 class="font-bold uppercase">{{ article.title }}</h1>
+            {% if article.excerpt.size > 0 %}
+              <p>{{ article.excerpt | strip_html | truncatewords: 20 }}</p>
+            {% else %}
+              <p>{{ article.content | strip_html | truncatewords: 20 }}</p>
+            {% endif %}
+            <a class="text-blue-600 hover:underline" href="{{ article.url }}">{{ section.settings.blog_read_more }}</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="max-w-6xl">
+      {% render 'pagination', pagination: paginate %}
+    </div>
+  {% endpaginate %}
+</div>
+
+
+
+{% schema %}
+  {
+    "name": "Blog",
+    "settings": [
+      {
+        "type": "range",
+        "id": "number_of_blog_posts",
+        "step": 1,
+        "min": 1,
+        "max": 6,
+        "label": "Blog postes per page",
+        "default": 3
+      }, {
+        "type": "text",
+        "id": "blog_read_more",
+        "label": "Reade more label",
+        "default": "Read more"
+      }
+
+    ]
+  }
+{% endschema %}
