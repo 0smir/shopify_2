@@ -1,0 +1,23 @@
+<div class="w-full py-6 py-3">
+  <div class="border bg-white shadow-lg rounded-lg">
+    <a href="{{ product_item.url }}">
+      <div class="h-80 w-full overflow-hidden">
+        {% if product_item.featured_image %}
+          <img
+            class="w-full h-full object-cover transition duration-1000 ese-in-out hover:scale-125 transform"
+            src="{{ product_item.featured_image | img_url: 'medium' }}"
+            alt="{{ product_item.featured_image.alt }}">
+        {% else %}
+          {% assign placeholder_img = 'product-1' %}
+          {{ placeholder_img | placeholder_svg_tag: 'w-full h-full object-cover border bg-lime-50' }}
+        {% endif %}
+      </div>
+    </a>
+    <div class="flex flex-col p-4">
+      <span class="text-sm text-gray-400">{{ product_item.vendor }}</span>
+      <a href="{{ product_item.url }}" class="text-gray-700 uppercase font-medium">{{ product_item.title }}</a>
+      <p class="text-gray-500">{{ product_item.price | money }}</p>
+    </div>
+
+  </div>
+</div>

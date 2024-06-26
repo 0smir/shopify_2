@@ -38,7 +38,7 @@
                   <div class="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
 
                     {% for childlink in link.links %}
-                      <a class="m-3 p-3 flex items start rounded-lg hover:bg-gray-100">
+                      <a class="m-3 p-3 flex items start rounded-lg hover:bg-gray-100" href="{{ childlink.url }}">
                         <div class="ml-4">
                           <p class="text-gray-900 text-base font-medium">
                             {{ childlink.title }}
