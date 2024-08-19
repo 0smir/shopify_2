@@ -43,12 +43,19 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
     <div class="priduct--medias">
       <div class="hidden md:block">
-        {% for media in product.media %}
-          <div class="h-100 overflow-hidden p-2">
-            {% render 'product-media' 
-             , media: media %}
-          </div>
-        {% endfor %}
+        <div class="h-100 overflow-hidden p-2">
+          <img
+            id="variant_image-{{ section.id }}"
+            src="{{ selected_variant.featured_image | image_url }}"
+            alt="current product">
+        </div>
+
+        {% comment %} {% for media in product.media %}
+        <div class="h-100 overflow-hidden p-2">
+        {% render 'product-media' 
+        , media: media %}
+        </div>
+        {% endfor %} {% endcomment %}
       </div>
       <div class="md:hidden">
         <div class="swiper h-94">
@@ -180,12 +187,12 @@
 
     getSelectedOptions() {
       this.options = Array.from(this.querySelectorAll('select'), (select) => (select.value));
-      console.log(this.options);
+      console.log('getSelectedOptions: ', this.options);
     }
 
     getVariantJSON() {
       this.variantData = this.variantData || JSON.parse(this.querySelector('[type="application/json"]').textContent);
-      console.log(this.variantData)
+      console.log('variantData: ', this.variantData)
       return this.variantData;
     }
 
@@ -234,16 +241,32 @@
       }&section_id=${
         this.dataset.section
       }`).then((response) => response.text()).then((responseText) => {
+
         const price_id = `price-${
           this.dataset.section
         }`;
+        const image = `variant_image-${
+          this.dataset.section
+        }`;
+
         const html = new DOMParser().parseFromString(responseText, 'text/html');
         const oldPrice = document.getElementById(price_id);
         const newPrice = html.getElementById(price_id);
+        const old_image = document.getElementById(image);
+        const new_image = html.getElementById(image);
 
         if (oldPrice && newPrice) 
           oldPrice.innerHTML = newPrice.innerHTML;
         
+
+
+
+        if (old_image && new_image) 
+          old_image.innerHTML = new_image.innerHTML;
+        
+
+
+        window.location.reload();
 
       })
     }
