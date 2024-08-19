@@ -158,8 +158,8 @@
 <script type="application/ld+json">
   {
   "@context": "http://schema.org",
-                            "@type": "BlogPosting",
-                            "headline": {{ article.title | json }},
+                                "@type": "BlogPosting",
+                                "headline": {{ article.title | json }},
   "articleBody": {{ article.content | strip_html | json }},
   {% if article.exerpt != blank %}
     "description": {{ article.exerpt | strip_html | json }},
@@ -170,12 +170,12 @@
   "datePublished": {{ article.datepublish_at | date: format: "default" | json }},
   "dateCreated": {{ article.created_at | date: format: "default" | json }},
   "author": {
-                                "@type": "Person",
-                                "name": {{ article.author | json }}
+                                    "@type": "Person",
+                                    "name": {{ article.author | json }}
   },
   "publisher": {
-                                "@type": "Organization",
-                                "name": {{ shop.name | json }}
+                                    "@type": "Organization",
+                                    "name": {{ shop.name | json }}
   }
   }
 </script>
