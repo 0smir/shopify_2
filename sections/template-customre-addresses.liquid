@@ -146,7 +146,12 @@
               name="address[phone]"
               class="w-full textgray-700 border px-4 py-3 focus:outline-none" />
           </div>
-
+          <div class="mb-4">
+            {{ form.set_as_default_checkbox }}
+            <label for="address_default_address_{{ form.id }}" class="uppercase text-gray-700 text-xs font-medium mb-2">
+              Set as default address
+            </label>
+          </div>
           <div class="flex flex-row gap-2">
             <button type="submit" class="w-full font-medium text-white bg-gray-700 hover:bg-gray-900 px-4 py-2">Create new Address</button>
             <button type="reset" class="w-full font-medium text-gray-700 border border-gray-700 hover:border-gray-900 px-4 py-2">Reset</button>
@@ -170,15 +175,25 @@
 
             <div class="flex flex-row gap-2">
               <button x-on:click="address_{{ address.id }} = true" class="w-full text-xs text-white bg-gray-700 hover:bg-gray-900 font-medium py-2">Edit</button>
-              <button class="w-full text-xs font-medium py-2 tex-gray-700 border">Delete</button>
+              <button
+                data-delate-address
+                data-url="{{ address.url }}"
+                class="w-full text-xs font-medium py-2 tex-gray-700 border">Delete</button>
             </div>
+
+            <form action="{{ address.url }}" method="post">
+              <input
+                type="hidden"
+                name="_method"
+                value="delete">
+            </form>
           </div>
 
-          {% comment %} modal {% endcomment %}
+          {% comment %} Edit address modal {% endcomment %}
           <div x-show="address_{{ address.id }}" class="h-full w-full fixed inset-0 bg-gray-600/50 overflow-y-auto z-50">
             <div class="relative max-w-md mx-auto bg-white border top-20 p-4">
               <div class="flex item-center justify-between mb-4">
-                <h2 class="text-lg font-medium">New address</h2>
+                <h2 class="text-lg font-medium">edit address</h2>
                 <button
                   x-on:click="address_{{ address.id }} = false"
                   class="text-gray-500"
@@ -197,7 +212,6 @@
                     type="text"
                     value="{{ form.first_name }}"
                     name="address[first_name]"
-                    size="30"
                     class="w-full textgray-700 border px-4 py-3 focus:outline-none" />
                 </div>
 
@@ -210,7 +224,6 @@
                     type="text"
                     value="{{ form.last_name }}"
                     name="address[last_name]"
-                    size="30"
                     class="w-full textgray-700 border px-4 py-3 focus:outline-none" />
                 </div>
 
@@ -316,6 +329,13 @@
                     class="w-full textgray-700 border px-4 py-3 focus:outline-none" />
                 </div>
 
+                <div class="mb-4">
+                  {{ form.set_as_default_checkbox }}
+                  <label for="address_default_address_{{ form.id }}" class="uppercase text-gray-700 text-xs font-medium mb-2">
+                    Set as default address
+                  </label>
+                </div>
+
                 <div class="flex flex-row gap-2">
                   <button type="submit" class="w-full font-medium text-white bg-gray-700 hover:bg-gray-900 px-4 py-2">Edit Address</button>
                   <button type="reset" class="w-full font-medium text-gray-700 border border-gray-700 hover:border-gray-900 px-4 py-2">Reset</button>
@@ -339,6 +359,26 @@
 
       this.initCustomerAddress();
       this.customerAddressesSelector();
+      this.initDeleteAdressButtons();
+    }
+
+    initDeleteAdressButtons() {
+      const deleteButtons = document.querySelectorAll("button[data-delate-address]");
+      if (deleteButtons.length < 1) {
+        return;
+      }
+
+      deleteButtons.forEach(button => {
+        button.addEventListener("click", function(e) {
+          var url = this.dataset.url;
+
+          var conformation = window.confirm('Do you really want to delete address?');
+
+          if (conformation) {
+            document.querySelector(`form[action="${url}"]`).submit();
+          }
+        })
+      });
     }
 
     initCustomerAddress() {
@@ -360,8 +400,6 @@
         var provinceSelector = document.querySelector(`#address_province_${
           select.dataset.id
         }`);
-
-        console.log('provinceSelector: ', provinceSelector);
 
         if (arrayOfProvince.length < 1) {
           provinceSelector.setAttribute('disabled', 'disabled');
@@ -416,12 +454,9 @@
         select.addEventListener('change', function(e) {
           var provinces = this.options[this.selectedIndex].dataset.provinces;
           var arrayOfProvince = JSON.parse(provinces);
-          console.log(provinces);
           var provinceSelector = document.querySelector(`#address_province_${
             this.dataset.id
           }`);
-
-          console.log(provinceSelector);
 
           if (arrayOfProvince.length < 1) {
             provinceSelector.setAttribute('disabled', 'disabled');
