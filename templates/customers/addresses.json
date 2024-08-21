@@ -1,0 +1,8 @@
+{
+    "sections":{
+        "template": {
+            "type": "template-customre-addresses"
+        }
+    },
+    "order": ["template"]
+}
