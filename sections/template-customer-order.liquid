@@ -15,7 +15,7 @@
             {% if line_item.image %}
               <img
                 class="w-full h-full object-cover object-center"
-                src="{{ line_item.image | image_url: 'medium' }}"
+                src="{{ line_item.image | img_url: 'medium' }}"
                 alt="{{ line_item.image.alt | escape}}"
                 width="{{ line_item.image.width }}"
                 height="{{ line_item.image.height }}">

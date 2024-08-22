@@ -5,7 +5,7 @@
         {% if product_item.featured_image %}
           <img
             class="w-full h-full object-cover transition duration-1000 ese-in-out hover:scale-125 transform"
-            src="{{ product_item.featured_image | image_url: 'medium' }}"
+            src="{{ product_item.featured_image | img_url: 'medium' }}"
             alt="{{ product_item.featured_image.alt | escape}}"
             width="{{ product_item.featured_image.width }}"
             height="{{ product_item.featured_image.height }}">

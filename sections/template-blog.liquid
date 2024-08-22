@@ -8,7 +8,7 @@
             {% if article.image != blank %}
               <a href="{{ article.url }}">
                 <img
-                  src="{{ article.image | image_url: 'medium'}}"
+                  src="{{ article.image | img_url: 'medium'}}"
                   width="{{ article.image.width }}"
                   height="{{ article.image.height }}"
                   class="block w-full"
