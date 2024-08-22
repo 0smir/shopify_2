@@ -43,28 +43,28 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
     <div class="priduct--medias">
       <div class="hidden md:block">
-        <div class="h-100 overflow-hidden p-2">
-          <img
-            id="variant_image-{{ section.id }}"
-            src="{{ selected_variant.featured_image | image_url }}"
-            alt="{{ product.title | escape }} {{ selected_variant.title | escape }}"
-            width="{{ selected_variant.featured_image.width }}"
-            height="{{ selected_variant.featured_image.height }}">
-        </div>
+        {% comment %} <div class="h-100 overflow-hidden p-2">
+        <img
+        id="variant_image-{{ section.id }}"
+        src="{{ selected_variant.featured_image | image_url }}"
+        alt="{{ product.title | escape }} {{ selected_variant.title | escape }}"
+        width="{{ selected_variant.featured_image.width }}"
+        height="{{ selected_variant.featured_image.height }}">
+        </div> {% endcomment %}
 
-        {% comment %} {% for media in product.media %}
-        <div class="h-100 overflow-hidden p-2">
-        {% render 'product-media' 
-        , media: media %}
-        </div>
-        {% endfor %} {% endcomment %}
+        {% for media in product.media %}
+          <div class="h-100 overflow-hidden p-2">
+            {% render 'product-media' 
+             , media: media %}
+          </div>
+        {% endfor %}
       </div>
       <div class="md:hidden">
-        <div class="swiper h-94">
+        <div class="swiper ">
           <div class="swiper-wrapper">
             {% for media in product.media %}
               <div class="swiper-slide">
-                <div class="h-80 overflow-hidden p-2">
+                <div class="h-[100vw] overflow-hidden p-2">
                   {% render 'product-media', media: media %}
                 </div>
               </div>
@@ -277,16 +277,23 @@
   customElements.define("variant-selector", VariantSelector);
 </script>
 <script>
-  const swiper = new Swiper('.swiper', {
-    direction: 'horizontal',
-    pagination: {
-      el: '.swiper-pagination'
-    },
-    navigation: {
-      prexEl: '.swiper-button-prev',
-      nextEl: '.swiper-button-next'
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+      const swiper = new Swiper('.swiper', {
+        direction: 'horizontal',
+        pagination: {
+          el: '.swiper-pagination'
+        },
+        navigation: {
+          prexEl: '.swiper-button-prev',
+          nextEl: '.swiper-button-next'
+        }
+      })
+    } catch (e) {
+      console.log('Swiper js is not defined')
     }
-  })
+
+  });
 </script>
 
 
