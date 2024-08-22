@@ -39,135 +39,155 @@
 </style>
 
 {% assign selected_variant = product.selected_or_first_available_variant %}
-<div class="max-w-6xl mx-auto my-8">
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-    <div class="priduct--medias">
-      <div class="hidden md:block">
-        {% comment %} <div class="h-100 overflow-hidden p-2">
-        <img
-        id="variant_image-{{ section.id }}"
-        src="{{ selected_variant.featured_image | img_url }}"
-        alt="{{ product.title | escape }} {{ selected_variant.title | escape }}"
-        width="{{ selected_variant.featured_image.width }}"
-        height="{{ selected_variant.featured_image.height }}">
-        </div> {% endcomment %}
+<script defer src="{{ 'product-model.js' | asset_url }}"></script>
+<div x-data="{ productModelOpen: false}" x-cloak>
+  <div class="max-w-6xl mx-auto my-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div class="priduct--medias">
+        <div class="hidden md:block">
+          {% comment %} <div class="h-100 overflow-hidden p-2">
+          <img
+          id="variant_image-{{ section.id }}"
+          src="{{ selected_variant.featured_image | img_url }}"
+          alt="{{ product.title | escape }} {{ selected_variant.title | escape }}"
+          width="{{ selected_variant.featured_image.width }}"
+          height="{{ selected_variant.featured_image.height }}">
+          </div> {% endcomment %}
 
-        {% for media in product.media %}
-          <div class="h-100 overflow-hidden p-2">
-            {% render 'product-media' 
-             , media: media %}
+          {% for media in product.media %}
+            <div class="h-100 overflow-hidden p-2">
+              {% render 'product-media' 
+               , media: media %}
+            </div>
+          {% endfor %}
+        </div>
+        <div class="md:hidden">
+          <div class="swiper ">
+            <div class="swiper-wrapper">
+              {% for media in product.media %}
+                <div class="swiper-slide">
+                  <div class="h-[100vw] overflow-hidden p-2">
+                    {% render 'product-media', media: media %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
           </div>
-        {% endfor %}
+        </div>
       </div>
-      <div class="md:hidden">
-        <div class="swiper ">
-          <div class="swiper-wrapper">
-            {% for media in product.media %}
-              <div class="swiper-slide">
-                <div class="h-[100vw] overflow-hidden p-2">
-                  {% render 'product-media', media: media %}
+      <div class="product--information sticky top-5 p-2">
+        {% form 'product', product, id: "product-form", novalidate: "novalidate" %}
+          <input
+            type="hidden"
+            name="id"
+            value="{{ selected_variant.id }}">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'vendor' %}
+              <div class="my-3">
+                <span class="text-xs text-gray-500">
+                  {{ product.vendor }}
+                </span>
+              </div>
+              <div class="my-3">
+                <h1 class="text-3xl text-gray-900">{{ product.title }}</h1>
+              </div>
+              {% when 'price' %}
+              <div class="my-3" id="price-{{ section.id }}">
+                <span class="text-gray-500 text-base line-through">{{ selected_variant.compare_at_price | money }}</span>
+                <span class="text-gray-900 text-lg">{{ selected_variant.price | money }}</span>
+                {% if selected_variant.price < selected_variant.compare_at_price %}
+                  <span class="px-5 py-1 font-bold bg-red-500 rounded-full text-white mx-4">Sale</span>
+                {% endif %}
+              </div>
+              {% when 'variant_selector' %}
+              <div class="my-3">
+                {% unless product.has_only_default_variant %}
+                  <variant-selector data-url="{{ product.url }}" data-section="{{ section.id }}">
+                    {% for option in product.options_with_values %}
+                      <label for="Option-{{section.id}}-{{ forloop.index0 }}">{{ option.name }}</label>
+                      <div class="my-2 text-black">
+
+                        <select
+                          name="options[{{ option.name | escape }}]"
+                          id="Option-{{section.id}}-{{ forloop.index0 }}"
+                          class="w-full border py-3 px-3">
+                          {% for value in option.values %}
+                            <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>
+                              {{ value }}
+                            </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    {% endfor %}
+                    <script type="application/json">
+                      {{ product.variants | json }}
+                    </script>
+                  </variant-selector>
+                {% endunless %}
+              </div>
+              {% when 'quantity' %}
+              <div class="my-3">
+                <label for="Quanity-{{ section.id }}">Qantity</label>
+                <div class="my-2">
+                  <input
+                    type="number"
+                    name="quantity"
+                    id="Quanity-{{ section.id }}"
+                    value="1"
+                    min="1"
+                    class="border px-3 py-3 w-full">
                 </div>
               </div>
-            {% endfor %}
+              {% when 'description' %}
+              <div class="my-3">
+                <p class="text-gray-700">{{ product.description }}</p>
+              </div>
+              {% when 'checkout_buttons' %}
+              <div class="my-3">
+                <button
+                  type="submit"
+                  name="add"
+                  class="px-6 py-3 bg-gray-900 w-full text-white hover:text-700 rounded-sm my-2"
+                  {% if selected_variant.available == false %}disabled{% endif %}>
+                  {% if selected_variant.available == false %}
+                    Sold out
+                    {% else %}-
+                    Add to cart
+                  {% endif %}
+                </button>
+              </div>
+          {% else %}
+
+            {% endcase %}
+          {% endfor %}
+        {% endform %}
+      </div>
+    </div>
+  </div>
+
+
+  <div id="productModelModal">
+    <div x-show="productModelOpen" class="w-full h-full z-50 items-center fixed inset-0">
+      <div class="relative w-full h-full bg-white">
+        <div class="relative">
+          <div class="flex justify-between items-start p-5 border-b">
+            <h2 class="text-xl font-bold text-gray-700">3D Model Preview</h2>
+            <button x-on:click="productModelOpen = false" class="text-gray-400 bg-transparent hover:text-gray-700 rounded text-sm p-2 ml-auto inline-flex items-center">
+              {% render 'icon' with 'icon-close' %}
+            </button>
           </div>
-          <div class="swiper-pagination"></div>
-          <div class="swiper-button-prev"></div>
-          <div class="swiper-button-next"></div>
+
+          <div id="body" class="block relative"></div>
         </div>
       </div>
     </div>
-    <div class="product--information sticky top-5 p-2">
-      {% form 'product', product, id: "product-form", novalidate: "novalidate" %}
-        <input
-          type="hidden"
-          name="id"
-          value="{{ selected_variant.id }}">
-        {% for block in section.blocks %}
-          {% case block.type %}
-            {% when 'vendor' %}
-            <div class="my-3">
-              <span class="text-xs text-gray-500">
-                {{ product.vendor }}
-              </span>
-            </div>
-            <div class="my-3">
-              <h1 class="text-3xl text-gray-900">{{ product.title }}</h1>
-            </div>
-            {% when 'price' %}
-            <div class="my-3" id="price-{{ section.id }}">
-              <span class="text-gray-500 text-base line-through">{{ selected_variant.compare_at_price | money }}</span>
-              <span class="text-gray-900 text-lg">{{ selected_variant.price | money }}</span>
-              {% if selected_variant.price < selected_variant.compare_at_price %}
-                <span class="px-5 py-1 font-bold bg-red-500 rounded-full text-white mx-4">Sale</span>
-              {% endif %}
-            </div>
-            {% when 'variant_selector' %}
-            <div class="my-3">
-              {% unless product.has_only_default_variant %}
-                <variant-selector data-url="{{ product.url }}" data-section="{{ section.id }}">
-                  {% for option in product.options_with_values %}
-                    <label for="Option-{{section.id}}-{{ forloop.index0 }}">{{ option.name }}</label>
-                    <div class="my-2 text-black">
-
-                      <select
-                        name="options[{{ option.name | escape }}]"
-                        id="Option-{{section.id}}-{{ forloop.index0 }}"
-                        class="w-full border py-3 px-3">
-                        {% for value in option.values %}
-                          <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>
-                            {{ value }}
-                          </option>
-                        {% endfor %}
-                      </select>
-                    </div>
-                  {% endfor %}
-                  <script type="application/json">
-                    {{ product.variants | json }}
-                  </script>
-                </variant-selector>
-              {% endunless %}
-            </div>
-            {% when 'quantity' %}
-            <div class="my-3">
-              <label for="Quanity-{{ section.id }}">Qantity</label>
-              <div class="my-2">
-                <input
-                  type="number"
-                  name="quantity"
-                  id="Quanity-{{ section.id }}"
-                  value="1"
-                  min="1"
-                  class="border px-3 py-3 w-full">
-              </div>
-            </div>
-            {% when 'description' %}
-            <div class="my-3">
-              <p class="text-gray-700">{{ product.description }}</p>
-            </div>
-            {% when 'checkout_buttons' %}
-            <div class="my-3">
-              <button
-                type="submit"
-                name="add"
-                class="px-6 py-3 bg-gray-900 w-full text-white hover:text-700 rounded-sm my-2"
-                {% if selected_variant.available == false %}disabled{% endif %}>
-                {% if selected_variant.available == false %}
-                  Sold out
-                  {% else %}-
-                  Add to cart
-                {% endif %}
-              </button>
-            </div>
-        {% else %}
-
-          {% endcase %}
-        {% endfor %}
-      {% endform %}
-    </div>
   </div>
+
 </div>
-
-
 <script>
   class VariantSelector extends HTMLElement {
     constructor() {
