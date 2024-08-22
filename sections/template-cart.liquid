@@ -24,8 +24,10 @@
                   <a href="{{ item.url }}">
                     {% if item.image %}
                       <img
-                        src="{{ item.image | img_url: 'small' }}"
+                        src="{{ item.image | image_url: 'small' }}"
                         alt="{{ item.title | escape }}"
+                        width="{{ item.image.width }}"
+                        height="{{ item.image.height }}"
                         class="w-20 h20 object-cover border">
                     {% else %}
                       {% assign placeholder_img = 'product-1' %}

@@ -7,7 +7,12 @@
           <div class="img-wrapper w-full h-[180px] overflow-hidden">
             {% if article.image != blank %}
               <a href="{{ article.url }}">
-                <img src="{{ article.image | img_url: 'medium'}}"class="block w-full"alt="{{ article.image.alt }}">
+                <img
+                  src="{{ article.image | image_url: 'medium'}}"
+                  width="{{ article.image.width }}"
+                  height="{{ article.image.height }}"
+                  class="block w-full"
+                  alt="{{ article.image.alt | escape}}">
               </a>
             {% else %}
               {% assign placeholder_img = 'lifestyle-2' %}

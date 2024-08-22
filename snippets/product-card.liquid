@@ -5,8 +5,10 @@
         {% if product_item.featured_image %}
           <img
             class="w-full h-full object-cover transition duration-1000 ese-in-out hover:scale-125 transform"
-            src="{{ product_item.featured_image | img_url: 'medium' }}"
-            alt="{{ product_item.featured_image.alt }}">
+            src="{{ product_item.featured_image | image_url: 'medium' }}"
+            alt="{{ product_item.featured_image.alt | escape}}"
+            width="{{ product_item.featured_image.width }}"
+            height="{{ product_item.featured_image.height }}">
         {% else %}
           {% assign placeholder_img = 'product-1' %}
           {{ placeholder_img | placeholder_svg_tag: 'w-full h-full object-cover border bg-lime-50' }}

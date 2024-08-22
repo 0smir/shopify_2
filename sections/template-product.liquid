@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 
 <style>
@@ -47,7 +47,9 @@
           <img
             id="variant_image-{{ section.id }}"
             src="{{ selected_variant.featured_image | image_url }}"
-            alt="current product">
+            alt="{{ product.title | escape }} {{ selected_variant.title | escape }}"
+            width="{{ selected_variant.featured_image.width }}"
+            height="{{ selected_variant.featured_image.height }}">
         </div>
 
         {% comment %} {% for media in product.media %}
@@ -264,6 +266,7 @@
         if (old_image && new_image) 
           old_image.innerHTML = new_image.innerHTML;
         
+
 
 
         window.location.reload();
